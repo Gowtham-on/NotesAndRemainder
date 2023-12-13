@@ -14,7 +14,7 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.example.lockapp.MainActivity
+import com.example.lockapp.notes.NotesActivity
 import com.example.lockapp.R
 import java.util.SortedMap
 import java.util.TreeMap
@@ -83,7 +83,7 @@ class ForegroundService : Service() {
 
 
     private fun makeForeground() {
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, NotesActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             this, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )

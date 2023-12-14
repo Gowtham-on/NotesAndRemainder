@@ -6,11 +6,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.lockapp.R
-import com.example.lockapp.notes.data.NotesInfo
+import com.example.lockapp.db.entity.Note
 
 class NotesInfoAdapter() : RecyclerView.Adapter<NotesInfoAdapter.ViewHolder>() {
 
-    private lateinit var notesInfoList: List<NotesInfo>
+    private var notesInfoList = listOf<Note>()
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
@@ -31,9 +31,10 @@ class NotesInfoAdapter() : RecyclerView.Adapter<NotesInfoAdapter.ViewHolder>() {
         return notesInfoList.size
     }
 
-    fun loadList(list: ArrayList<NotesInfo>) {
+    fun loadList(list: List<Note>) {
         notesInfoList = ArrayList()
         notesInfoList = list
+        notifyDataSetChanged()
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

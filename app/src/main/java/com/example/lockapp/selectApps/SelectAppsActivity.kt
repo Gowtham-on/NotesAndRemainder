@@ -2,6 +2,7 @@ package com.example.lockapp.selectApps
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +19,8 @@ class SelectAppsActivity : AppCompatActivity() {
 
     // Views
     private lateinit var appsListRv: RecyclerView
+    private lateinit var cancelBtn: Button
+    private lateinit var selectBtn: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,10 +29,19 @@ class SelectAppsActivity : AppCompatActivity() {
 
         selectAppsBinding.apply {
             appsListRv = appsRecyclerV
+            cancelBtn = cancel
+            selectBtn = select
         }
 
         setContentView(selectAppsBinding.root)
 
+        cancelBtn.setOnClickListener {
+            finish()
+        }
+
+        selectBtn.setOnClickListener {
+
+        }
 
         val packageManager = packageManager
         val intent = Intent(Intent.ACTION_MAIN, null)

@@ -6,15 +6,17 @@ import android.provider.Settings
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.lockapp.R
 import com.example.lockapp.databinding.ActivityMainBinding
+import com.example.lockapp.db.NoteDatabase
 import com.example.lockapp.details.DetailsActivity
 import com.example.lockapp.notes.adapter.NotesInfoAdapter
-import com.example.lockapp.notes.data.NotesInfo
 import com.example.lockapp.service.ForegroundService
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.launch
 
 class NotesActivity : AppCompatActivity() {
 
@@ -24,6 +26,9 @@ class NotesActivity : AppCompatActivity() {
     private lateinit var notesRv: RecyclerView
     private lateinit var floatingBtn: FloatingActionButton
 
+    val adapter = NotesInfoAdapter()
+
+    private val noteDatabase by lazy { NoteDatabase.getDatabase(this).noteDao() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,22 +58,21 @@ class NotesActivity : AppCompatActivity() {
 
         notesRv.layoutManager = LinearLayoutManager(this)
 
-        // ArrayList of class ItemsViewModel
-        val data = ArrayList<NotesInfo>()
-
-        for (i in 1 .. 20) {
-            data.add(NotesInfo("Subject $i", "content $i", "time $i"))
-        }
-
-        // This will pass the ArrayList to our Adapter
-        val adapter = NotesInfoAdapter()
-        adapter.loadList(data)
-
         // Setting the Adapter with the recyclerview
         notesRv.adapter = adapter
 
+        observeNotes()
 
     }
 
+    private fun observeNotes() {
+        lifecycleScope.launch {
+            noteDatabase.getNotes().collect { notesList ->
+                if (notesList.isNotEmpty()) {
+                    adapter.loadList(notesList)
+                }
+            }
+        }
+    }
 
 }

@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.lockapp.R
@@ -15,7 +16,7 @@ class AppListAdapter : RecyclerView.Adapter<AppListAdapter.ViewHolder>() {
 
     private lateinit var notesInfoList: List<AppListData>
 
-    private var selectedApps = ArrayList<AppListData>()
+    private lateinit var selectedApps: AppListData
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
@@ -42,22 +43,33 @@ class AppListAdapter : RecyclerView.Adapter<AppListAdapter.ViewHolder>() {
         notesInfoList = list
     }
 
+    fun getSelectedAppsList() : AppListData {
+        return selectedApps
+    }
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = notesInfoList[position]
 
         holder.appName.text = item.appName
         holder.packageName.text = item.packageName
 
+        holder.checkBox.isSelected = false
+        holder.checkBox.isChecked = false
+
+        if (this::selectedApps.isInitialized && item.packageName == selectedApps.packageName) {
+            holder.checkBox.isSelected = true
+            holder.checkBox.isChecked = true
+        }
+
         holder.itemView.setOnClickListener {
             holder.checkBox.isSelected = !holder.checkBox.isChecked
             holder.checkBox.isChecked = !holder.checkBox.isChecked
             if (holder.checkBox.isSelected) {
-                selectedApps.add(item)
-            } else {
-                selectedApps.remove(item)
+                selectedApps = item
             }
-        }
+            notifyDataSetChanged()
 
+        }
         Glide.with(holder.itemView.context).load(item.icon).into(holder.icon)
     }
 }

@@ -25,11 +25,21 @@
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="10dp"
         android:ellipsize="end"
-        android:maxLines="2"
+        android:maxLines="1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/notes_subject"
         tools:text="notes_contentnotes_contentnotes_contentnotes_contentnotes_contentnotes_contentnotes_contentnotes_contentnotes_contentnotes_contentnotes_contentnnotes_contentnotes_contentnotes_contentnotes_contentotes_content" />
 
+    <TextView
+        android:id="@+id/app_name_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        app:layout_constraintTop_toBottomOf="@id/notes_content"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="10dp"
+        android:textSize="18sp"
+        tools:text="Selected App: Photos" />
 
     <TextView
         android:id="@+id/time_tv"
@@ -47,7 +57,7 @@
         android:layout_height="1dp"
         android:layout_marginTop="10dp"
         android:background="@color/grey"
-        app:layout_constraintTop_toBottomOf="@id/notes_content" />
+        app:layout_constraintTop_toBottomOf="@id/app_name_tv" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

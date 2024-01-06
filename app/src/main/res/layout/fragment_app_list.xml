@@ -7,7 +7,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".notes.NotesActivity">
+        tools:context=".details.DetailsActivity">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/apps_recyclerV"
@@ -33,6 +33,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="5dp"
                 android:layout_weight="1"
+                android:paddingVertical="10dp"
                 android:text="@string/cancel" />
 
             <Button
@@ -40,6 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
+                android:paddingVertical="10dp"
                 android:layout_weight="1"
                 android:text="@string/select" />
 

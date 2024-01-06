@@ -3,10 +3,17 @@ package com.example.lockapp.notes.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.TypeConverter
 import com.example.lockapp.R
 import com.example.lockapp.db.entity.Note
+import com.example.lockapp.selectApps.data.AppListData
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import org.json.JSONObject
 
 class NotesInfoAdapter() : RecyclerView.Adapter<NotesInfoAdapter.ViewHolder>() {
 
@@ -17,6 +24,7 @@ class NotesInfoAdapter() : RecyclerView.Adapter<NotesInfoAdapter.ViewHolder>() {
         val subject: TextView = view.findViewById(R.id.notes_subject)
         val content: TextView = view.findViewById(R.id.notes_content)
         val time: TextView = view.findViewById(R.id.time_tv)
+        val appName: TextView = view.findViewById(R.id.app_name_tv)
 
     }
 
@@ -40,9 +48,29 @@ class NotesInfoAdapter() : RecyclerView.Adapter<NotesInfoAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = notesInfoList[position]
 
-        holder.subject.text = item.subject
-        holder.content.text = item.content
-        holder.time.text = item.time
+        if (item.content.isEmpty()) {
+            holder.content.text = "---"
+        } else {
+            holder.content.text = item.content
+        }
 
+        if (item.subject.isEmpty()) {
+
+        } else {holder.subject.text = "---"
+            holder.subject.text = item.subject
+        }
+
+        val jsonObject = JSONObject(item.selectedApps)
+        val appName = jsonObject.getString("appName")
+        holder.appName.text = holder.itemView.context.getString(R.string.selected_apps, appName)
+
+        holder.time.text = item.time
+    }
+
+    @TypeConverter
+    fun fromSelectedAppsJson(json: String): AppListData {
+        return Gson().fromJson(
+            json, object : TypeToken<AppListData>() {}.type
+        )
     }
 }

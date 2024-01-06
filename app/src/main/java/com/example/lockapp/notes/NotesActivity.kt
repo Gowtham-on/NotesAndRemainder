@@ -1,34 +1,29 @@
 package com.example.lockapp.notes
 
-import android.content.Intent
 import android.os.Bundle
-import android.provider.Settings
-import android.widget.TextView
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.lockapp.R
 import com.example.lockapp.databinding.ActivityMainBinding
-import com.example.lockapp.db.NoteDatabase
-import com.example.lockapp.details.DetailsActivity
 import com.example.lockapp.notes.adapter.NotesInfoAdapter
-import com.example.lockapp.service.ForegroundService
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.coroutines.launch
+import com.example.lockapp.notes.fragment.NotesListFragment
 
 class NotesActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
     // Views
-    private lateinit var notesRv: RecyclerView
-    private lateinit var floatingBtn: FloatingActionButton
+    private lateinit var frame: FrameLayout
 
-    val adapter = NotesInfoAdapter()
 
-    private val noteDatabase by lazy { NoteDatabase.getDatabase(this).noteDao() }
+    val notesVm: NotesViewmodel by lazy {
+        ViewModelProvider(this).get(
+            NotesViewmodel::class.java
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,43 +31,27 @@ class NotesActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         binding.apply {
-            notesRv = notesRecyclerV
-            floatingBtn = addNotesData
+            frame = frameLayout
         }
 
         setContentView(binding.root)
 
-        val tv = findViewById<TextView>(R.id.textV)
+//        val tv = findViewById<TextView>(R.id.textV)
+//
+//        tv.setOnClickListener {
+//            val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
+//            startActivity(intent)
+//            ForegroundService.startService(this)
+//        }
 
-        tv.setOnClickListener {
-            val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
-            startActivity(intent)
-            ForegroundService.startService(this)
-        }
-
-        floatingBtn.setOnClickListener {
-            // Go to next Activity
-            val intent = Intent(this, DetailsActivity::class.java)
-            startActivity(intent)
-        }
-
-        notesRv.layoutManager = LinearLayoutManager(this)
-
-        // Setting the Adapter with the recyclerview
-        notesRv.adapter = adapter
-
-        observeNotes()
-
+        replaceFragment(NotesListFragment.getInstance())
     }
 
-    private fun observeNotes() {
-        lifecycleScope.launch {
-            noteDatabase.getNotes().collect { notesList ->
-                if (notesList.isNotEmpty()) {
-                    adapter.loadList(notesList)
-                }
-            }
-        }
+    private fun replaceFragment(fragment: Fragment) {
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.frame_layout, fragment)
+        transaction.commit()
     }
+
 
 }

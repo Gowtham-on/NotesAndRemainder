@@ -3,9 +3,7 @@ package com.example.lockapp.notes.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.TypeConverter
 import com.example.lockapp.R
@@ -55,8 +53,8 @@ class NotesInfoAdapter() : RecyclerView.Adapter<NotesInfoAdapter.ViewHolder>() {
         }
 
         if (item.subject.isEmpty()) {
-
-        } else {holder.subject.text = "---"
+            holder.subject.text = "---"
+        } else {
             holder.subject.text = item.subject
         }
 

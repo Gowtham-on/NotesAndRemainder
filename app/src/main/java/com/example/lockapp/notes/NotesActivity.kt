@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.lockapp.R
 import com.example.lockapp.databinding.ActivityMainBinding
-import com.example.lockapp.notes.adapter.NotesInfoAdapter
 import com.example.lockapp.notes.fragment.NotesListFragment
 
 class NotesActivity : AppCompatActivity() {

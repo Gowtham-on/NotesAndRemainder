@@ -14,8 +14,8 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.example.lockapp.notes.NotesActivity
 import com.example.lockapp.R
+import com.example.lockapp.notes.NotesActivity
 import java.util.SortedMap
 import java.util.TreeMap
 
@@ -67,7 +67,7 @@ class ForegroundService : Service() {
                 if (!sortedMap.isEmpty()) {
                     val currentPackageName = sortedMap[sortedMap.lastKey()]!!.packageName
 
-                    Log.e("TAG", "monitorForegroundApp: $currentPackageName" )
+                    Log.e("TAG", "monitorForegroundApp: $currentPackageName")
 
                     if (true) {
                     }

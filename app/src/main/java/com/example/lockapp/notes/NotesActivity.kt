@@ -1,6 +1,8 @@
 package com.example.lockapp.notes
 
+import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -9,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.lockapp.R
 import com.example.lockapp.databinding.ActivityMainBinding
 import com.example.lockapp.notes.fragment.NotesListFragment
+import com.example.lockapp.service.ForegroundService
 
 class NotesActivity : AppCompatActivity() {
 
@@ -35,6 +38,10 @@ class NotesActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
+
+            val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
+            startActivity(intent)
+            ForegroundService.startService(this)
 //        val tv = findViewById<TextView>(R.id.textV)
 //
 //        tv.setOnClickListener {

@@ -47,37 +47,57 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/content_et" />
 
+        <Button
+            android:id="@+id/select_time_date_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="@string/select_time_and_date"
+            app:layout_constraintStart_toEndOf="@id/select_apps_btn"
+            app:layout_constraintTop_toBottomOf="@id/content_et" />
+
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/app_details_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/select_apps_btn"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/select_apps_btn">
 
             <TextView
                 android:id="@+id/app_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
+                android:layout_marginStart="15dp"
                 android:textColor="@color/black"
                 android:textSize="18sp"
-                android:layout_marginStart="15dp"
+                app:layout_constraintBottom_toBottomOf="@id/appIconImageView"
                 app:layout_constraintStart_toEndOf="@id/appIconImageView"
                 app:layout_constraintTop_toTopOf="@id/appIconImageView"
-                app:layout_constraintBottom_toBottomOf="@id/appIconImageView"
                 tools:text="Subject One" />
 
             <ImageView
                 android:id="@+id/appIconImageView"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_marginTop="10dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <TextView
+            android:id="@+id/selected_time_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/app_details_layout" />
 
         <LinearLayout
             android:id="@+id/buttons_layout"
@@ -101,8 +121,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:paddingVertical="10dp"
                 android:layout_weight="1"
+                android:paddingVertical="10dp"
                 android:text="@string/select" />
 
         </LinearLayout>

@@ -1,5 +1,7 @@
 package com.example.lockapp.notes.fragment
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +25,7 @@ import com.example.lockapp.notes.NotesViewmodel
 import com.example.lockapp.selectApps.data.AppListData
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 class NotesDetailsFragment : Fragment() {
 
@@ -37,6 +40,8 @@ class NotesDetailsFragment : Fragment() {
     private lateinit var appIcon: ImageView
     private lateinit var appName: TextView
     private lateinit var appDetailsLl: ConstraintLayout
+    private lateinit var timeDateBtn: Button
+    private lateinit var selectedTime: TextView
 
     private val notesVm: NotesViewmodel by activityViewModels()
     private var selectedApp = ""
@@ -67,6 +72,8 @@ class NotesDetailsFragment : Fragment() {
             appIcon = appIconImageView
             appName = appTitle
             appDetailsLl = appDetailsLayout
+            timeDateBtn = selectTimeDateBtn
+            selectedTime = selectedTimeTv
         }
 
         val noteDatabase = NoteDatabase.getDatabase(requireContext()).noteDao()
@@ -79,6 +86,10 @@ class NotesDetailsFragment : Fragment() {
 
         cancelBtn.setOnClickListener {
             replaceFragment(NotesListFragment.getInstance())
+        }
+
+        timeDateBtn.setOnClickListener {
+            pickDateTime()
         }
 
         saveBtn.setOnClickListener {
@@ -97,7 +108,12 @@ class NotesDetailsFragment : Fragment() {
                             subject.text.toString(),
                             content.text.toString(),
                             "14 Dec",
-                            selectedApp
+                            selectedApp,
+                            notesVm.getSelectedTimeAndDate().day,
+                            notesVm.getSelectedTimeAndDate().month,
+                            notesVm.getSelectedTimeAndDate().year,
+                            notesVm.getSelectedTimeAndDate().hour,
+                            notesVm.getSelectedTimeAndDate().min,
                         )
                     )
                 }
@@ -116,6 +132,37 @@ class NotesDetailsFragment : Fragment() {
         observeSelectedApp()
     }
 
+    private fun pickDateTime() {
+        val currentDateTime = Calendar.getInstance()
+        val startYear = currentDateTime.get(Calendar.YEAR)
+        val startMonth = currentDateTime.get(Calendar.MONTH)
+        val startDay = currentDateTime.get(Calendar.DAY_OF_MONTH)
+        val startHour = currentDateTime.get(Calendar.HOUR_OF_DAY)
+        val startMinute = currentDateTime.get(Calendar.MINUTE)
+
+        DatePickerDialog(requireContext(), { _, year, month, day ->
+            TimePickerDialog(
+                requireContext(),
+                { _, hour, minute ->
+                    val pickedDateTime = Calendar.getInstance()
+                    pickedDateTime.set(year, month, day, hour, minute)
+                    selectedTime.text = "$day/${month+1}/$year, $hour:$minute:00"
+
+                    notesVm.setSelectedTimeAndDate(SelectedTimeAndDate(
+                        hour,
+                        minute,
+                        year,
+                        month+1,
+                        day
+                    ))
+
+                },
+                startHour,
+                startMinute,
+                false
+            ).show()
+        }, startYear, startMonth, startDay).show()
+    }
 
     private fun observeSelectedApp() {
         lifecycleScope.launch {
@@ -141,3 +188,11 @@ class NotesDetailsFragment : Fragment() {
         return gson.toJson(value)
     }
 }
+
+data class SelectedTimeAndDate(
+    var hour: Int,
+    var min: Int,
+    var year: Int,
+    var month: Int,
+    var day: Int
+)

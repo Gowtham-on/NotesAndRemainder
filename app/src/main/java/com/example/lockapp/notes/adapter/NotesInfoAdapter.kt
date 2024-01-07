@@ -58,11 +58,12 @@ class NotesInfoAdapter() : RecyclerView.Adapter<NotesInfoAdapter.ViewHolder>() {
             holder.subject.text = item.subject
         }
 
+        holder.time.text = "${item.day}/${item.month}/${item.year}, ${item.hour}:${item.min}:00"
+
         val jsonObject = JSONObject(item.selectedApps)
         val appName = jsonObject.getString("appName")
         holder.appName.text = holder.itemView.context.getString(R.string.selected_apps, appName)
 
-        holder.time.text = item.time
     }
 
     @TypeConverter

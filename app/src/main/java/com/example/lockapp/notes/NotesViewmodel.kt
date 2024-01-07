@@ -2,6 +2,7 @@ package com.example.lockapp.notes
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.lockapp.notes.fragment.SelectedTimeAndDate
 import com.example.lockapp.selectApps.data.AppListData
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -16,6 +17,7 @@ class NotesViewmodel : ViewModel() {
     private var noteSubject = ""
     private var noteContent = ""
 
+    private lateinit var selectedDateAndTime: SelectedTimeAndDate
 
     fun setSelectedAppsList(appData: AppListData) {
         viewModelScope.launch {
@@ -39,4 +41,11 @@ class NotesViewmodel : ViewModel() {
         return noteContent
     }
 
+    fun setSelectedTimeAndDate(value: SelectedTimeAndDate) {
+        selectedDateAndTime = value
+    }
+
+    fun getSelectedTimeAndDate(): SelectedTimeAndDate{
+        return selectedDateAndTime
+    }
 }

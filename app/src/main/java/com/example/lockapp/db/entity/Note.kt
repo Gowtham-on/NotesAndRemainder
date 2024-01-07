@@ -11,4 +11,9 @@ data class Note(
     @ColumnInfo(name = "noteContent") val content: String,
     @ColumnInfo(name = "noteTime") val time: String,
     @ColumnInfo(name = "selectedApps") val selectedApps: String,
+    @ColumnInfo(name = "selectedDay") val day: Int,
+    @ColumnInfo(name = "selectedMonth") val month: Int,
+    @ColumnInfo(name = "selectedYear") val year: Int,
+    @ColumnInfo(name = "selectedHour") val hour: Int,
+    @ColumnInfo(name = "selectedMin") val min: Int,
 )

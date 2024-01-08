@@ -58,9 +58,6 @@ class NotesListFragment : Fragment() {
         }
 
         floatingBtn.setOnClickListener {
-            // Go to next Activity
-//            val intent = Intent(requireContext(), DetailsActivity::class.java)
-//            startActivity(intent)
             replaceFragment(NotesDetailsFragment.getInstance())
         }
 

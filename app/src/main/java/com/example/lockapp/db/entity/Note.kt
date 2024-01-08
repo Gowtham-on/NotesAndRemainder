@@ -16,4 +16,5 @@ data class Note(
     @ColumnInfo(name = "selectedYear") val year: Int,
     @ColumnInfo(name = "selectedHour") val hour: Int,
     @ColumnInfo(name = "selectedMin") val min: Int,
+    @ColumnInfo(name = "selectedMillis") val millis: Long,
 )

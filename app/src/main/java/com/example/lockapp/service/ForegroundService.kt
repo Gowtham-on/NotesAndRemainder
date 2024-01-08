@@ -1,6 +1,7 @@
 package com.example.lockapp.service
 
 
+import android.app.ActivityManager
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -13,37 +14,44 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.lifecycleScope
 import com.example.lockapp.R
+import com.example.lockapp.db.NoteDatabase
+import com.example.lockapp.db.entity.Note
 import com.example.lockapp.notes.NotesActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import org.json.JSONObject
 import java.util.SortedMap
 import java.util.TreeMap
 
 
-class ForegroundService : Service() {
+class ForegroundService : LifecycleService() {
 
     private lateinit var notificationManager: NotificationManager
 
     private var isStarted = false
-    private val isMonitoring = true
+
+
+    private var noteslist = arrayListOf<Note>()
 
     override fun onCreate() {
         super.onCreate()
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        makeForeground("", "")
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        isStarted = false
-    }
-
-    override fun onBind(intent: Intent?): IBinder? {
-        throw UnsupportedOperationException()
-    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(intent, flags, startId)
         if (!isStarted) {
-            makeForeground()
             Thread { monitorForegroundApp() }.start()
             isStarted = true
         }
@@ -52,37 +60,64 @@ class ForegroundService : Service() {
     }
 
     private fun monitorForegroundApp() {
-        val usageStatsManager = getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
-        val interval: Long = 5000 // Set your desired monitoring interval
-        while (isMonitoring) {
-            val currentTime = System.currentTimeMillis()
-            val usageStatsList = usageStatsManager.queryUsageStats(
-                UsageStatsManager.INTERVAL_BEST, currentTime - interval, currentTime
-            )
-            if (usageStatsList != null && usageStatsList.isNotEmpty()) {
-                val sortedMap: SortedMap<Long, UsageStats> = TreeMap()
-                for (usageStats in usageStatsList) {
-                    sortedMap[usageStats.lastTimeUsed] = usageStats
-                }
-                if (!sortedMap.isEmpty()) {
-                    val currentPackageName = sortedMap[sortedMap.lastKey()]!!.packageName
 
-                    Log.e("TAG", "monitorForegroundApp: $currentPackageName")
-
-                    if (true) {
+        while (true) {
+            val currentApp = printForegroundTask()
+            lifecycleScope.launch(Dispatchers.Default) {
+                observeNotes()
+                for (items in noteslist) {
+                    val jsonObject = JSONObject(items.selectedApps)
+                    val packageName = jsonObject.getString("packageName")
+                    val appName = jsonObject.getString("appName")
+                    if (currentApp == packageName) {
+                        makeForeground(items.subject, items.content)
                     }
                 }
             }
             try {
-                Thread.sleep(interval)
+                Thread.sleep(10000)
             } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
         }
     }
 
+    private fun observeNotes(){
+        val noteDatabase = NoteDatabase.getDatabase(this@ForegroundService).noteDao()
+        lifecycleScope.launch(Dispatchers.IO) {
+            noteDatabase.getNotes().collect { notesList ->
+                noteslist = notesList as ArrayList
+            }
+        }
 
-    private fun makeForeground() {
+    }
+
+    private fun printForegroundTask(): String {
+        var currentApp = "NULL"
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val usm = this.getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
+            val time = System.currentTimeMillis()
+            val appList =
+                usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - 1000 * 1000, time)
+            if (appList != null && appList.size > 0) {
+                val mySortedMap: SortedMap<Long, UsageStats> = TreeMap()
+                for (usageStats in appList) {
+                    mySortedMap[usageStats.lastTimeUsed] = usageStats
+                }
+                if (mySortedMap != null && !mySortedMap.isEmpty()) {
+                    currentApp = mySortedMap[mySortedMap.lastKey()]!!.packageName
+                }
+            }
+        } else {
+            val am = this.getSystemService(ACTIVITY_SERVICE) as ActivityManager
+            val tasks = am.runningAppProcesses
+            currentApp = tasks[0].processName
+        }
+        return currentApp
+    }
+
+
+    private fun makeForeground(sub: String, content: String) {
         val intent = Intent(this, NotesActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             this, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
@@ -91,8 +126,8 @@ class ForegroundService : Service() {
         createServiceNotificationChannel()
 
         val notification: Notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Title")
-            .setContentText("Running in background")
+            .setContentTitle(sub)
+            .setContentText(content)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentIntent(pendingIntent)
             .build()

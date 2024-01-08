@@ -10,4 +10,6 @@
     <string name="no_notes_found">No Notes Found</string>
     <string name="selected_apps">Selected App: %1s</string>
     <string name="select_time_and_date">Select Time and Date</string>
+    <string name="accessibility_service_description">Description of your Accessibility Service</string>
+
 </resources>

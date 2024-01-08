@@ -100,6 +100,8 @@ class NotesDetailsFragment : Fragment() {
                 Toast.makeText(requireContext(), "Content is Empty", Toast.LENGTH_SHORT).show()
             } else if (selectedApp.isEmpty()) {
                 Toast.makeText(requireContext(), "No Apps are selected", Toast.LENGTH_SHORT).show()
+            } else if(selectedTime.text == "") {
+                Toast.makeText(requireContext(), "Select Date and Time", Toast.LENGTH_SHORT).show()
             } else {
                 lifecycleScope.launch {
                     noteDatabase.addNote(
@@ -114,6 +116,7 @@ class NotesDetailsFragment : Fragment() {
                             notesVm.getSelectedTimeAndDate().year,
                             notesVm.getSelectedTimeAndDate().hour,
                             notesVm.getSelectedTimeAndDate().min,
+                            notesVm.getSelectedTimeAndDate().millis,
                         )
                     )
                 }
@@ -140,6 +143,7 @@ class NotesDetailsFragment : Fragment() {
         val startHour = currentDateTime.get(Calendar.HOUR_OF_DAY)
         val startMinute = currentDateTime.get(Calendar.MINUTE)
 
+
         DatePickerDialog(requireContext(), { _, year, month, day ->
             TimePickerDialog(
                 requireContext(),
@@ -148,12 +152,20 @@ class NotesDetailsFragment : Fragment() {
                     pickedDateTime.set(year, month, day, hour, minute)
                     selectedTime.text = "$day/${month+1}/$year, $hour:$minute:00"
 
+                    val calendar = Calendar.getInstance()
+                    calendar[Calendar.HOUR_OF_DAY] = hour
+                    calendar[Calendar.MINUTE] = minute
+                    calendar[Calendar.SECOND] = 0
+                    calendar[Calendar.MILLISECOND] = 0
+
+                    val millis = calendar.timeInMillis
                     notesVm.setSelectedTimeAndDate(SelectedTimeAndDate(
                         hour,
                         minute,
                         year,
                         month+1,
-                        day
+                        day,
+                        millis
                     ))
 
                 },
@@ -194,5 +206,6 @@ data class SelectedTimeAndDate(
     var min: Int,
     var year: Int,
     var month: Int,
-    var day: Int
+    var day: Int,
+    var millis: Long
 )
